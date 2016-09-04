@@ -1,14 +1,19 @@
-var _$ = function(query) {
+var _$ = function(param, settings) {
     return {
 
         // properties
         //
-        el: document.querySelector(query),
+        // IDEA: use isNode() or isElement()
+        el: (function(){
+          if (settings === true || settings.node)
+          return param;
+          return document.querySelector(param);
+        }()),
 
         // methods
         //
-        _$: function(query) {
-          return new _$(query);
+        _$: function(param) {
+          return new _$(param);
         },
         addClass: function(pClass) {
             if (this.el.classList)
@@ -44,6 +49,16 @@ var _$ = function(query) {
         },
         removeEventListener: function() {
             EventTarget.prototype.removeEventListener.apply(this.el, arguments);
+        },
+        dispatchEvent: function(){
+          EventTarget.prototype.dispatchEvent.apply(this.el, arguments);
+        },
+        children: function(){
+          var children = this.el.children;
+          var res = [];
+          for (var i=0; i<children.length; i++)
+            res.push(new _$(children[i]), true);
+          return res;
         }
     };
 };
